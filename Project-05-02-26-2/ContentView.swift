@@ -1,24 +1,32 @@
-//
-//  ContentView.swift
-//  Project-05-02-26-2
-//
-//  Created by Timofey on 5. 2. 2026..
-//
 
 import SwiftUI
 
 struct ContentView: View {
+    @Environment(DataController.self) var dataController
+    @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
+    
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+        Group {
+            if hasCompletedOnboarding {
+                MainTabView()
+            } else {
+                OnboardingView(hasCompletedOnboarding: $hasCompletedOnboarding)
+            }
         }
-        .padding()
+        .animation(AppTheme.Animation.smooth, value: hasCompletedOnboarding)
     }
 }
 
-#Preview {
+#Preview("Main App") {
     ContentView()
+        .environment(DataController.shared)
+}
+
+#Preview("Onboarding") {
+    @Previewable @AppStorage("hasCompletedOnboarding") var completed = false
+    ContentView()
+        .environment(DataController.shared)
+        .onAppear {
+            completed = false
+        }
 }
